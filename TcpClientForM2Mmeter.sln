@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.35026.282
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TcpClientForM2Mmeter", "TcpClientForM2Mmeter\TcpClientForM2Mmeter.vcxproj", "{0472FC4D-30B4-4760-A391-925D51BA1F82}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0472FC4D-30B4-4760-A391-925D51BA1F82}.Release|x64.ActiveCfg = Release|x64
+		{0472FC4D-30B4-4760-A391-925D51BA1F82}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5DE67BE9-02E5-4A78-AD1B-EF84835A6C09}
+	EndGlobalSection
+EndGlobal
