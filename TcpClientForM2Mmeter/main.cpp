@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 
 	//QFuture<void> future = QtConcurrent::run(TcpClient::connectToServer, );
 
-	QFuture<void> future = QtConcurrent::map(tcpMassive, connection);
+	QFuture<void> future = QtConcurrent::map(tcpMassive.begin(), tcpMassive.end(), connection);
 
 	future.waitForFinished();
 
