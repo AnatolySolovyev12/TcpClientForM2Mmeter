@@ -1,59 +1,44 @@
 #include "TcpClient.h"
 #include <QCoreApplication>
 #include <QtConcurrent>
-
 #include <QFuture>
+#include <QThread>
 
 QString ip = "172.16.64.";
-
-int ipFour = 0;
 quint16 port = 8888;
 
-void connection(TcpClient* any)
+void connection(TcpClient* client, int id)
 {
-	
-
-	any->connectToServer(ip + QString::number(ipFour++), port);
-
-
-};
+    client->connectToServer(ip + QString::number(id), port);
+}
 
 int main(int argc, char* argv[])
 {
-	QCoreApplication a(argc, argv);
+    QCoreApplication a(argc, argv);
 
-	//TcpClient client;
+    QList<TcpClient*> tcpMassive;
+    QList<QFuture<void>> futMassive;
 
+    for (int counter = 0; counter < 5; counter++)
+    {
+        TcpClient* client = new TcpClient(nullptr); // Создаем TcpClient без родителя
+        QThread* thread = new QThread(); // Создаем новый поток
+        client->moveToThread(thread); // Перемещаем TcpClient в новый поток
 
+        // Подключаем сигнал завершения потока к удалению объекта
+        QObject::connect(thread, &QThread::finished, client, &QObject::deleteLater);
+        QObject::connect(thread, &QThread::finished, thread, &QObject::deleteLater);
 
-	QList<TcpClient*>tcpMassive;
-	
-	for (int counter = 0; counter != 5; counter++)
-	{
-		tcpMassive.push_back(new TcpClient());
-	}
+        // Запускаем поток
+        thread->start();
 
+        // Запускаем соединение в новом потоке
+        futMassive.push_back(QtConcurrent::run(connection, client, counter));
+    }
 
-	QList<QFuture<void>>futMassive;
+    for (auto& future : futMassive) {
+        future.waitForFinished();
+    }
 
-	for (int val = 0; val < tcpMassive.length(); val++)
-	{
-
-	    futMassive.push_back(QtConcurrent::run(connection, futMassive[val]));
-
-
-	}
-
-	for (auto& future : futMassive) {
-		future.waitForFinished();
-	}
-
-	//QFuture<void> future = QtConcurrent::map(tcpMassive.begin(), tcpMassive.end(), connection);
-
-	//future.waitForFinished();
-
-
-
-
-	return a.exec();
+    return a.exec();
 }

@@ -3,7 +3,7 @@
 #include <QTextStream>
 
 
-TcpClient::TcpClient(QObject* parent) : QObject(parent), socket(new QTcpSocket(this))
+TcpClient::TcpClient(QObject* parent) : QObject(parent), socket(new QTcpSocket(nullptr))
 {
 	QTextStream in(stdin);
 	QTextStream out(stdout);
