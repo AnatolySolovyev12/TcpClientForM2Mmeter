@@ -15,10 +15,10 @@ TcpClient::TcpClient(QObject* parent) : QObject(parent), socket(new QTcpSocket(t
 	connect(socket, &QTcpSocket::errorOccurred, this, &TcpClient::onErrorOccurred);
 	connect(myTimer, &QTimer::timeout, this, &TcpClient::exchange);
 
-	out << "Enter IP:" << Qt::endl;
-	in >> ip;
+	//out << "Enter IP:" << Qt::endl;
+	//in >> ip;
 
-	connectToServer(ip, port);
+	//connectToServer(ip, port);
 }
 
 TcpClient::~TcpClient()
@@ -30,6 +30,7 @@ TcpClient::~TcpClient()
 
 void TcpClient::connectToServer(const QString& host, quint16 port)
 {
+	ip = host;
 	socket->connectToHost(QHostAddress(host), port);
 	qDebug() << "Connect to " + QHostAddress(host).toString();
 
@@ -56,7 +57,7 @@ void TcpClient::sendMessage(const QByteArray& message)
 			//socket->write(byteArray);
 
 		socket->write(message);
-		qDebug() << "TX >> " << message;
+		//qDebug() << "TX >> " << message;
 	}
 	else {
 		qDebug() << "Not connected to server.";
@@ -66,14 +67,14 @@ void TcpClient::sendMessage(const QByteArray& message)
 void TcpClient::onConnected()
 {
 	// connectedState = true;
-	qDebug() << "Connected to server.";
+	qDebug() << ip + " Connected to server.";
 	exchange();
 }
 
 void TcpClient::onDisconnected()
 {
 	connectedState = false;
-	qDebug() << "Disconnected from server.";
+	qDebug() << ip + " Disconnected from server.";
 }
 
 void TcpClient::onReadyRead()
@@ -81,7 +82,7 @@ void TcpClient::onReadyRead()
 	QByteArray data = socket->readAll();
 	//QString message = QString::fromUtf8(data);
 	// emit messageReceived(message);
-	qDebug() << "RX << " << data.toHex();
+	//qDebug() << "RX << " << data.toHex();
 
 	if (counterForResend >= 2 && counterForResend != 16)
 	{
@@ -97,7 +98,7 @@ void TcpClient::onReadyRead()
 
 void TcpClient::onErrorOccurred(QAbstractSocket::SocketError socketError)
 {
-	qDebug() << "Socket error:" << socketError << socket->errorString();
+	qDebug() << ip + " Socket error:" << socketError << socket->errorString();
 }
 
 void TcpClient::summAnswer(QString& any)
@@ -108,7 +109,7 @@ void TcpClient::summAnswer(QString& any)
 	temporaryAnswer.chop(6);
 	QString frankenshteinString;
 
-	qDebug() << "after sliced and chop = " + temporaryAnswer << '\n';
+	//qDebug() << "after sliced and chop = " + temporaryAnswer << '\n';
 
 	if ((temporaryAnswer.toUInt(&ok, 16) > 4200000000) && counterForResend > 5)
 	{
@@ -151,7 +152,7 @@ void TcpClient::summAnswer(QString& any)
 		}
 
 		answerString += frankenshteinString + ' ';
-		qDebug() << "after convert " + frankenshteinString << '\n';
+		//qDebug() << "after convert " + frankenshteinString << '\n';
 	}
 
 	if (counterForResend == 6 || counterForResend == 11 || counterForResend == 12 || counterForResend == 13)
@@ -165,7 +166,7 @@ void TcpClient::summAnswer(QString& any)
 			answerString += temporaryAnswer + ' ';
 		}
 		//answerString += temporaryAnswer + ' ';
-		qDebug() << "after convert " + temporaryAnswer << '\n';
+		//qDebug() << "after convert " + temporaryAnswer << '\n';
 	}
 
 	if (counterForResend == 7 || counterForResend == 8 || counterForResend == 9 || counterForResend == 10 || counterForResend == 14 || counterForResend == 15)
@@ -206,7 +207,7 @@ void TcpClient::summAnswer(QString& any)
 		{
 			answerString += frankenshteinString + ' ';
 		}
-		qDebug() << "after convert " + frankenshteinString << '\n';
+		//qDebug() << "after convert " + frankenshteinString << '\n';
 	}
 }
 
@@ -505,6 +506,6 @@ void TcpClient::exchange()
 	{
 		myTimer->stop();
 		socket->close();
-		qDebug() << '\n' << answerString;
+		qDebug() << '\n' << ip + "   " + answerString;
 	}
 }
