@@ -33,11 +33,27 @@ int main(int argc, char* argv[])
 		tcpMassive.push_back(new TcpClient());
 	}
 
-	//QFuture<void> future = QtConcurrent::run(TcpClient::connectToServer, );
 
-	QFuture<void> future = QtConcurrent::map(tcpMassive.begin(), tcpMassive.end(), connection);
+	QList<QFuture<void>>futMassive;
 
-	future.waitForFinished();
+	for (int val = 0; val < tcpMassive.length(); val++)
+	{
+
+	    futMassive.push_back(QtConcurrent::run(connection, futMassive[val]));
+
+
+	}
+
+	for (auto& future : futMassive) {
+		future.waitForFinished();
+	}
+
+	//QFuture<void> future = QtConcurrent::map(tcpMassive.begin(), tcpMassive.end(), connection);
+
+	//future.waitForFinished();
+
+
+
 
 	return a.exec();
 }
